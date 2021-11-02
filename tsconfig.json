@@ -1,23 +1,15 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "es2015",
+    "module": "commonjs",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "target": "ES2017",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": ".",
-    "jsx": "react",
-    "jsxFactory": "m",
-    "jsxFragmentFactory": "m.fragment",
-    "removeComments": false,
-    "allowJs": true,
-    "paths": {
-      "@/*": ["src/components/*"],
-      "styles/*": ["src/styles/*"]
-    }
+    "rootDir": "src",
+    "skipLibCheck": true
   },
   "include": ["src/**/*"]
 }
