@@ -26,9 +26,12 @@ export class TeeworldsEcon {
     if (!this.options.host) this.options.host = 'localhost';
 
     this.state = 'connecting';
-    this.conn = net.connect({ host: this.options.host, port: this.options.port });
-    this.conn.on('close', hadError => this.closeHook?.(hadError));
-    this.conn.on('error', err => this.errorHook?.(err));
+    this.conn = net.connect({
+      host: this.options.host,
+      port: this.options.port,
+    });
+    this.conn.on('close', (hadError) => this.closeHook?.(hadError));
+    this.conn.on('error', (err) => this.errorHook?.(err));
     return new Promise<void>((resolve, reject) => {
       this.timeout = setTimeout(() => {
         if (this.state == 'connecting') {
@@ -36,7 +39,7 @@ export class TeeworldsEcon {
           reject(new Error('Connection timeout.'));
         }
       }, this.options.timeout);
-      this.conn.on('data', data => {
+      this.conn.on('data', (data) => {
         const line = data.toString('utf-8').trimEnd();
         if (this.state == 'connecting') {
           if (line.startsWith('Enter password:')) {
@@ -75,7 +78,7 @@ export class TeeworldsEcon {
         flushed = this.conn.write(command + '\n');
       }
       if (!flushed) {
-        return new Promise<void>(resolve => {
+        return new Promise<void>((resolve) => {
           this.conn.once('drain', () => {
             resolve();
           });
@@ -102,26 +105,29 @@ export class TeeworldsEcon {
     return this;
   }
 
-  static async quickfire(options: EconOptions, command: string | string[]): Promise<void>;
   static async quickfire(
     options: EconOptions,
     command: string | string[],
-    collectResponsesFor: number
+  ): Promise<void>;
+  static async quickfire(
+    options: EconOptions,
+    command: string | string[],
+    collectResponsesFor: number,
   ): Promise<string[]>;
   static async quickfire(
     options: EconOptions,
     command: string | string[],
-    collectResponsesFor: number = 0
+    collectResponsesFor = 0,
   ): Promise<void | string[]> {
     const econ = new TeeworldsEcon(options);
     await econ.connect();
     if (collectResponsesFor) {
       const responses: string[] = [];
-      econ.on('message', msg => {
+      econ.on('message', (msg) => {
         responses.push(msg);
       });
       await econ.send(command);
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           econ.disconnect();
           resolve(responses);
